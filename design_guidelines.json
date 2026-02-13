@@ -1,0 +1,157 @@
+{
+  "identity": {
+    "name": "E1",
+    "mission": "Anti-AI Design",
+    "principles": [
+      "Fusion over Imitation",
+      "Emotion First",
+      "Content is King",
+      "Zoom In",
+      "Negative Space",
+      "Contrast"
+    ]
+  },
+  "project_context": {
+    "app_name": "SocialPulse AI",
+    "app_type": "SaaS Social Media Dashboard",
+    "vibe": "Creative, Vibrant, High-Energy",
+    "target_audience": "Creators, Businesses, Gen Z Marketers"
+  },
+  "typography": {
+    "fonts": {
+      "heading": {
+        "family": "Clash Display, sans-serif",
+        "url": "https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap",
+        "usage": "All H1-H3 headings. Use font-semibold or font-bold. Tracking-tight."
+      },
+      "body": {
+        "family": "Plus Jakarta Sans, sans-serif",
+        "url": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
+        "usage": "Body text, UI elements, inputs. Tracking-normal."
+      },
+      "mono": {
+        "family": "JetBrains Mono, monospace",
+        "url": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap",
+        "usage": "Code snippets, AI prompts, data values."
+      }
+    },
+    "rules": [
+      "NO Inter for headings.",
+      "NO Space Grotesk.",
+      "Headings > 32px must use tracking-tight.",
+      "Overlines must be uppercase + tracking-widest."
+    ]
+  },
+  "colors": {
+    "palette_strategy": "Vibrant Play meets Swiss High-Contrast",
+    "light_mode": {
+      "background": "0 0% 100%",
+      "foreground": "240 10% 3.9%",
+      "primary": "262 83% 58%",
+      "primary_foreground": "0 0% 98%",
+      "secondary": "316 73% 52%",
+      "accent": "173 80% 40%",
+      "muted": "240 5% 96%",
+      "border": "240 6% 90%"
+    },
+    "dark_mode": {
+      "background": "240 10% 4%",
+      "foreground": "0 0% 98%",
+      "primary": "263 70% 50%",
+      "primary_foreground": "0 0% 98%",
+      "secondary": "316 70% 50%",
+      "accent": "160 84% 39%",
+      "muted": "240 4% 16%",
+      "border": "240 4% 16%"
+    },
+    "forbidden_colors": [
+      "#1B93A4 (Teal Blue for dashboards)",
+      "#7351B7 (Generic AI Purple - use Electric Violet instead)"
+    ]
+  },
+  "layout": {
+    "spacing_system": {
+      "base": "Generous. Use 2-3x standard spacing.",
+      "scale": ["p-4", "p-8", "p-12", "p-16", "p-24", "p-32"],
+      "rule": "Containers with borders MUST have internal padding (p-6 or p-8)."
+    },
+    "grid_strategy": {
+      "marketing": "Mode A: Tetris Grid. Asymmetrical. Mix col-span-full, col-span-4, col-span-2.",
+      "dashboard": "Mode B: High Density. Tight gaps (gap-4). Every pixel utilized."
+    },
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+  },
+  "components": {
+    "buttons": {
+      "style": "Pill-shaped (rounded-full).",
+      "interaction": "Hover: Scale 1.05 + Brightness 110%. Active: Scale 0.95.",
+      "shadow": "shadow-lg hover:shadow-xl transition-all duration-300"
+    },
+    "cards": {
+      "style": "Glassmorphism or Tracing Beam.",
+      "glass": "bg-white/70 dark:bg-black/60 backdrop-blur-xl border border-white/20 shadow-sm",
+      "hover": "hover:-translate-y-1 hover:shadow-lg transition-transform duration-300"
+    },
+    "inputs": {
+      "style": "Deep background (bg-muted/50). No default browser borders.",
+      "focus": "ring-2 ring-primary/50 ring-offset-2 ring-offset-background"
+    },
+    "navigation": {
+      "style": "Floating Glass Bar. Fixed at top or bottom.",
+      "blur": "backdrop-blur-md bg-background/80"
+    }
+  },
+  "visual_enhancers": {
+    "gradients": "Subtle noise overlays. No full-screen smooth gradients.",
+    "shadows": "Colored shadows matching the element's hue (e.g., shadow-purple-500/20).",
+    "borders": "1px solid border-white/10 (Dark) or border-black/5 (Light).",
+    "animations": {
+      "scroll": "Lenis smooth scrolling (optional but recommended).",
+      "micro": "Framer Motion for hover, tap, and entrance."
+    }
+  },
+  "images": {
+    "hero_background": {
+      "url": "https://images.unsplash.com/photo-1767482712541-d104b3826d3d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMDNkJTIwc2hhcGVzJTIwdmlicmFudCUyMGdyYWRpZW50fGVufDB8fHx8MTc3MDk4MDg2N3ww&ixlib=rb-4.1.0&q=85",
+      "alt": "Abstract vibrant 3D shapes",
+      "usage": "Hero section background or decorative elements"
+    },
+    "team_collaboration": {
+      "url": "https://images.unsplash.com/photo-1762784574847-16c5100cd1ff?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODh8MHwxfHNlYXJjaHwxfHxjcmVhdGl2ZSUyMHRlYW0lMjBicmFpbnN0b3JtaW5nJTIwbW9kZXJuJTIwb2ZmaWNlfGVufDB8fHx8MTc3MDk4MDg2Mnww&ixlib=rb-4.1.0&q=85",
+      "alt": "Two women working on laptops",
+      "usage": "About section or Features (Collaboration)"
+    },
+    "social_icons_3d": {
+      "url": "https://images.unsplash.com/photo-1694109016554-9a52bff4e9f1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjh8MHwxfHNlYXJjaHwzfHxzb2NpYWwlMjBtZWRpYSUyMGxvZ29zJTIwM2QlMjBmbG9hdGluZ3xlbnwwfHx8fDE3NzA5ODA4NzJ8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "3D floating social media icons",
+      "usage": "Features section (Multi-platform support)"
+    }
+  },
+  "tech_stack": {
+    "framework": "React",
+    "styling": "Tailwind CSS",
+    "components": "Shadcn UI",
+    "icons": "Lucide React",
+    "state": "Zustand",
+    "calendar": "FullCalendar"
+  },
+  "instructions_to_main_agent": [
+    "1. SETUP: Install 'lucide-react', 'clsx', 'tailwind-merge' if missing.",
+    "2. FONTS: Add Clash Display and Plus Jakarta Sans to index.html or import in CSS.",
+    "3. THEME: Update tailwind.config.js with the provided color palette (convert HSL values).",
+    "4. LAYOUT: Build the Landing Page using the 'Tetris Grid' strategy.",
+    "5. DASHBOARD: Build the Dashboard using the 'High Density' strategy with Glassmorphism sidebar.",
+    "6. COMPONENTS: Customize Shadcn components to match the 'Pill-shaped' and 'Glass' aesthetics.",
+    "7. IMAGES: Use the provided Unsplash URLs. DO NOT use placeholders.",
+    "8. TESTING: Add data-testid to all interactive elements."
+  ],
+  "universal_guidelines": [
+    "Avoid 'AI Slop' (generic centered layouts).",
+    "Use z-index to create depth.",
+    "NO universal transitions (transition: all).",
+    "NO text-align: center on the App container.",
+    "Use 'sonner' for toasts.",
+    "Export components as named exports.",
+    "Export pages as default exports."
+  ]
+}
