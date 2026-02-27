@@ -40,31 +40,48 @@ const ChatbotPage = () => {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const currentPrompt = inputValue;
     setInputValue('');
     setIsLoading(true);
 
     try {
-      // TODO: Replace with actual API call when backend is ready
-      // const response = await api.post('/ai/generate', {
-      //   prompt: inputValue,
-      //   type: contentType,
-      // });
+      const response = await api.post('/ai/generate', {
+        prompt: currentPrompt,
+        type: contentType,
+        platform: 'general'
+      });
 
-      // Mock AI response
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      if (response.data.success) {
+        const aiResponse = {
+          id: Date.now() + 1,
+          type: 'ai',
+          content: response.data.content,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, aiResponse]);
+      }
+    } catch (error) {
+      console.error('AI generation error:', error);
       
-      const aiResponse = {
+      let errorMessage = 'Failed to generate content. ';
+      
+      if (error.response?.data?.message?.includes('API key')) {
+        errorMessage += 'AI service is not configured. Please add your API keys in the backend .env file.';
+      } else if (error.response?.data?.message) {
+        errorMessage += error.response.data.message;
+      } else {
+        errorMessage += 'Please try again.';
+      }
+      
+      toast.error(errorMessage);
+      
+      const errorResponse = {
         id: Date.now() + 1,
         type: 'ai',
-        content: contentType === 'text' 
-          ? `Here's an engaging ${contentType === 'text' ? 'social media post' : 'image prompt'} based on your request:\n\n"${inputValue}"\n\nWould you like me to refine this or generate another version?`
-          : `I've generated an image concept for: "${inputValue}"\n\n[Image will be generated using Gemini API when backend is connected]\n\nWould you like me to adjust the style or create variations?`,
+        content: `I apologize, but I encountered an error: ${errorMessage}\n\nYou can still create posts manually or add API keys to enable AI generation.`,
         timestamp: new Date(),
       };
-
-      setMessages((prev) => [...prev, aiResponse]);
-    } catch (error) {
-      toast.error('Failed to generate content. Please try again.');
+      setMessages((prev) => [...prev, errorResponse]);
     } finally {
       setIsLoading(false);
     }
