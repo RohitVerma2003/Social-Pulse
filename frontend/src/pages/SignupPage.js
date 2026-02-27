@@ -24,23 +24,16 @@ const SignupPage = () => {
     setLoading(true);
 
     try {
-      // TODO: Replace with actual API call when backend is ready
-      // const response = await api.post('/auth/signup', formData);
-      // login(response.data.user, response.data.token);
-
-      // Mock signup for now
-      const mockUser = {
-        id: '1',
-        name: formData.name,
-        email: formData.email,
-      };
-      const mockToken = 'demo-token-12345';
-      login(mockUser, mockToken);
-
-      toast.success('Account created successfully!');
-      navigate('/dashboard');
+      const response = await api.post('/auth/signup', formData);
+      
+      if (response.data.success) {
+        login(response.data.user, response.data.token);
+        toast.success('Account created successfully!');
+        navigate('/dashboard');
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Signup failed');
+      console.error('Signup error:', error);
+      toast.error(error.response?.data?.message || 'Signup failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -143,6 +136,7 @@ const SignupPage = () => {
                     setFormData({ ...formData, password: e.target.value })
                   }
                   required
+                  minLength={6}
                 />
                 <button
                   type="button"

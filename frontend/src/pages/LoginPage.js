@@ -23,23 +23,16 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // TODO: Replace with actual API call when backend is ready
-      // const response = await api.post('/auth/login', formData);
-      // login(response.data.user, response.data.token);
-
-      // Mock login for now
-      const mockUser = {
-        id: '1',
-        name: 'Demo User',
-        email: formData.email,
-      };
-      const mockToken = 'demo-token-12345';
-      login(mockUser, mockToken);
-
-      toast.success('Login successful!');
-      navigate('/dashboard');
+      const response = await api.post('/auth/login', formData);
+      
+      if (response.data.success) {
+        login(response.data.user, response.data.token);
+        toast.success('Login successful!');
+        navigate('/dashboard');
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      console.error('Login error:', error);
+      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
