@@ -6,11 +6,14 @@ require('dotenv').config();
 const connectDB = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
 const { startScheduler } = require('./services/scheduler');
+const cookieParser = require("cookie-parser");
+
 
 const app = express();
 
 // Connect to Database
 connectDB();
+app.use(cookieParser());
 
 // CORS Configuration
 const corsOptions = {
@@ -42,7 +45,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // Health Check Route
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     success: true,
     message: 'SocialPulse AI Backend API',
     version: '1.0.0',
@@ -51,7 +54,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api', (req, res) => {
-  res.json({ 
+  res.json({
     success: true,
     message: 'SocialPulse AI API',
     endpoints: {
@@ -70,6 +73,7 @@ app.use('/api/posts', require('./routes/posts'));
 app.use('/api/ai', require('./routes/ai'));
 app.use('/api/accounts', require('./routes/accounts'));
 app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/auth', require('./routes/linkedinAuth'));
 
 // 404 Handler
 app.use((req, res) => {
@@ -96,7 +100,7 @@ const server = app.listen(PORT, () => {
 ║                                                ║
 ╚════════════════════════════════════════════════╝
   `);
-  
+
   // Start post scheduler
   startScheduler();
 });

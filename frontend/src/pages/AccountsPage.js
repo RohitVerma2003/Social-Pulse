@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Twitter, Linkedin, Instagram, Link2, CheckCircle, XCircle } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import { Button } from '../components/ui/button';
@@ -8,7 +8,38 @@ import useAccountsStore from '../stores/accountsStore';
 import { toast } from 'sonner';
 
 const AccountsPage = () => {
-  const { connectedAccounts, connectAccount, disconnectAccount } = useAccountsStore();
+  const { connectedAccounts, fetchAccounts, connectAccountAPI, disconnectAccountAPI, isLoading, error, clearError } = useAccountsStore();
+  const [connecting, setConnecting] = useState(null);
+
+  // Fetch accounts on component mount and handle OAuth callback
+  useEffect(() => {
+    fetchAccounts();
+
+    // Handle OAuth callback
+    const params = new URLSearchParams(window.location.search);
+    const platform = params.get('platform');
+    const success = params.get('success');
+
+    if (platform && success === 'true') {
+      toast.success(`${platform.charAt(0).toUpperCase() + platform.slice(1)} connected successfully!`);
+      // Refresh accounts to show newly connected account
+      fetchAccounts();
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    if (platform && success === 'false') {
+      const error = params.get('error');
+      toast.error(error || `Failed to connect ${platform}`);
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    if (error) {
+      toast.error(error);
+      clearError();
+    }
+  }, [fetchAccounts, error, clearError]);
 
   const platforms = [
     {
@@ -34,28 +65,33 @@ const AccountsPage = () => {
     },
   ];
 
-  const handleConnect = (platformId) => {
-    // TODO: Implement actual OAuth flow when backend is ready
-    const mockAccountData = {
-      id: `${platformId}-123`,
-      username: `@demo_${platformId}`,
-      followers: Math.floor(Math.random() * 10000),
-      connectedAt: new Date().toISOString(),
-    };
+  const handleConnect = async (platformId) => {
+    try {
+      const oauthUrl = `${process.env.REACT_APP_BACKEND_URL}/api/auth/linkedin`;
 
-    connectAccount(platformId, mockAccountData);
-    toast.success(`${platformId.charAt(0).toUpperCase() + platformId.slice(1)} connected successfully!`);
+      window.location.href = oauthUrl;
+
+    } catch (err) {
+      toast.error(`Failed to initiate ${platformId} connection`);
+    }
   };
 
-  const handleDisconnect = (platformId) => {
-    disconnectAccount(platformId);
-    toast.success(`${platformId.charAt(0).toUpperCase() + platformId.slice(1)} disconnected successfully!`);
+  const handleDisconnect = async (platformId) => {
+    setConnecting(platformId);
+    try {
+      await disconnectAccountAPI(platformId);
+      toast.success(`${platformId.charAt(0).toUpperCase() + platformId.slice(1)} disconnected successfully!`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || `Failed to disconnect ${platformId}`);
+    } finally {
+      setConnecting(null);
+    }
   };
 
   return (
     <div className="h-screen flex flex-col">
-      <Navbar 
-        title="Connected Accounts" 
+      <Navbar
+        title="Connected Accounts"
         subtitle="Manage your social media connections"
       />
 
@@ -84,6 +120,7 @@ const AccountsPage = () => {
               const Icon = platform.icon;
               const isConnected = !!connectedAccounts[platform.id];
               const account = connectedAccounts[platform.id];
+              const isConnectingThis = connecting === platform.id;
 
               return (
                 <Card
@@ -140,8 +177,9 @@ const AccountsPage = () => {
                         onClick={() => handleDisconnect(platform.id)}
                         variant="outline"
                         className="w-full rounded-full"
+                        disabled={isConnectingThis || isLoading}
                       >
-                        Disconnect
+                        {isConnectingThis ? 'Disconnecting...' : 'Disconnect'}
                       </Button>
                     ) : (
                       <Button
@@ -152,8 +190,9 @@ const AccountsPage = () => {
                           backgroundColor: platform.color,
                           color: 'white',
                         }}
+                        disabled={isConnectingThis || isLoading}
                       >
-                        Connect {platform.name}
+                        {isConnectingThis ? 'Connecting...' : `Connect ${platform.name}`}
                       </Button>
                     )}
                   </CardContent>
@@ -171,7 +210,7 @@ const AccountsPage = () => {
                 We only request the permissions necessary to schedule and publish your content.
               </p>
               <p className="text-sm text-muted-foreground">
-                <strong>Note:</strong> Your credentials are never stored on our servers. We use secure OAuth authentication.
+                <strong>Note:</strong> Your credentials are encrypted and never stored in plain text. We use secure OAuth authentication.
               </p>
             </CardContent>
           </Card>

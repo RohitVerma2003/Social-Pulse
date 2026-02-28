@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const { generateToken } = require('../utils/jwt');
+const auth = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -23,10 +24,10 @@ router.post('/signup', validateSignup, async (req, res, next) => {
     // Check validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
         message: 'Validation failed',
-        errors: errors.array() 
+        errors: errors.array()
       });
     }
 
@@ -35,9 +36,9 @@ router.post('/signup', validateSignup, async (req, res, next) => {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'User with this email already exists' 
+        message: 'User with this email already exists'
       });
     }
 
@@ -74,10 +75,10 @@ router.post('/login', validateLogin, async (req, res, next) => {
     // Check validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
         message: 'Validation failed',
-        errors: errors.array() 
+        errors: errors.array()
       });
     }
 
@@ -85,26 +86,33 @@ router.post('/login', validateLogin, async (req, res, next) => {
 
     // Find user and include password field
     const user = await User.findOne({ email }).select('+password');
-    
+
     if (!user) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Invalid email or password' 
+        message: 'Invalid email or password'
       });
     }
 
     // Check password
     const isPasswordValid = await user.comparePassword(password);
-    
+
     if (!isPasswordValid) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Invalid email or password' 
+        message: 'Invalid email or password'
       });
     }
 
     // Generate JWT token
     const token = generateToken(user._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // true in prod
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
 
     res.json({
       success: true,
@@ -124,23 +132,29 @@ router.post('/login', validateLogin, async (req, res, next) => {
 });
 
 // GET /api/auth/me - Get current user
-router.get('/me', require('../middleware/auth'), async (req, res, next) => {
+router.get('/me', auth, async (req, res, next) => {
   try {
-    const user = await User.findById(req.userId);
-    
-    res.json({
-      success: true,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        bio: user.bio,
-        avatar: user.avatar
-      }
-    });
+    const user = await User.findById(req.userId).select("-password");
+    const authHeader = req.headers.authorization;
+    const token = authHeader ? authHeader.split(' ')[1] : null;
+    res.json({ success: true, user, token });
   } catch (error) {
     next(error);
   }
+});
+
+// POST /api/auth/logout - Logout user
+router.post('/logout', (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  });
+
+  res.json({
+    success: true,
+    message: 'Logged out successfully'
+  });
 });
 
 module.exports = router;
